@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  pg-gawmas:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pg-gawmas
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_SUPER_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_SUPER_PASSWORD}
+    ports:
+      - "5001:5432"
+    volumes:
+      - pg-vol-gawmas:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_SUPER_USER} -d ${POSTGRES_DB}"]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
+  api-gawmas:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: api-gawmas
+    depends_on:
+      pg-gawmas:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pg-gawmas:5432/${POSTGRES_DB}"
+      ADMIN_SLUG: ${ADMIN_SLUG}
+      PUBLIC_SLUG: ${PUBLIC_SLUG}
+      API_PORT: ${API_PORT}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api:/gawmas
+      - '/gawmas/node_modules'
+
+  ui-gawmas:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    container_name: ui-gawmas
+    depends_on:
+      - api-gawmas
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./ui:/usr/gawmas/src/app
+      - '/usr/gawmas/src/app/node_modules'
+
+volumes:
+  pg-vol-gawmas:
+

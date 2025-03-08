@@ -1,0 +1,6 @@
+[submodule "api"]
+	path = api
+	url = git@github.com:gawmas/ga-wmas-api-public.git
+[submodule "ui"]
+	path = ui
+	url = git@github.com:gawmas/ga-wmas-ui.git
