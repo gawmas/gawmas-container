@@ -30,6 +30,7 @@ services:
       pg-gawmas:
         condition: service_healthy
     environment:
+      PROD_MODE: ${PROD_MODE}
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pg-gawmas:5432/${POSTGRES_DB}"
       ADMIN_SLUG: ${ADMIN_SLUG}
       PUBLIC_SLUG: ${PUBLIC_SLUG}
@@ -47,6 +48,10 @@ services:
     container_name: ui-gawmas
     depends_on:
       - api-gawmas
+    environment:
+      - PROD_MODE=${PROD_MODE}
+      - UI_API_URL=${UI_API_URL}
+      - UI_ADMIN_API_URL=${UI_ADMIN_API_URL}
     ports:
       - "4200:4200"
     volumes:
