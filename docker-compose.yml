@@ -35,6 +35,8 @@ services:
       ADMIN_SLUG: ${ADMIN_SLUG}
       PUBLIC_SLUG: ${PUBLIC_SLUG}
       API_PORT: ${API_PORT}
+      WEATHERSTACK_API_KEY: ${WEATHERSTACK_API_KEY}
+      WEATHERSTACK_API: ${WEATHERSTACK_API}
     ports:
       - "3000:3000"
     volumes:
