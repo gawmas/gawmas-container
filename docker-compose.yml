@@ -31,6 +31,8 @@ services:
         condition: service_healthy
     environment:
       PROD_MODE: ${PROD_MODE}
+      HOST_LOCALHOST: ${HOST_LOCALHOST}
+      HOST_NETWORK: ${HOST_NETWORK}
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pg-gawmas:5432/${POSTGRES_DB}"
       ADMIN_SLUG: ${ADMIN_SLUG}
       PUBLIC_SLUG: ${PUBLIC_SLUG}
@@ -59,6 +61,18 @@ services:
     volumes:
       - ./ui:/usr/gawmas/src/app
       - '/usr/gawmas/src/app/node_modules'
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gawmas
+    depends_on:
+      - api-gawmas
+      - ui-gawmas
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: always
 
 volumes:
   pg-vol-gawmas:
